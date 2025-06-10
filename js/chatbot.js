@@ -106,46 +106,68 @@
     messages.scrollTop = messages.scrollHeight;
   }
 
+  // Ajout d'une animation typing pour le bot
+  function showTyping() {
+    const typing = document.createElement('div');
+    typing.className = 'cbt-typing';
+    typing.innerHTML = `<span style="background:rgba(255,255,255,0.85);color:#222;padding:12px 20px;border-radius:20px;max-width:80%;display:inline-block;box-shadow:0 4px 18px rgba(0,0,0,0.10);font-size:1rem;line-height:1.5;border:1px solid #e3f0ff;">
+      <span class='cbt-typing-dot'></span><span class='cbt-typing-dot'></span><span class='cbt-typing-dot'></span>
+    </span>`;
+    typing.style.margin = '10px 0';
+    typing.style.display = 'flex';
+    typing.style.justifyContent = 'flex-start';
+    messages.appendChild(typing);
+    messages.scrollTop = messages.scrollHeight;
+    return typing;
+  }
+  function removeTyping(typing) {
+    if (typing && typing.parentNode) typing.parentNode.removeChild(typing);
+  }
+
   function botReply(userText) {
     const lower = userText.toLowerCase();
     let response = "Je suis WiseBot, comment puis-je vous aider ?";
     const random = arr => arr[Math.floor(Math.random()*arr.length)];
-    if (/bonjour|salut|hello/.test(lower)) response = random([
-      "Bonjour ! Comment puis-je vous assister aujourd'hui ? 😊",
-      "Salut ! Besoin d'aide ? Je suis là pour vous.",
-      "Hello ! Que puis-je faire pour vous ? 👋"
-    ]);
-    else if (/prix|tarif/.test(lower)) response = random([
-      "Nos plans commencent à 0€ pour l'offre gratuite. Plus de détails ?",
-      "Nous proposons plusieurs tarifs adaptés à vos besoins. Voulez-vous une brochure ? 💡",
-      "Les prix varient selon l'offre. Je peux vous guider si besoin !"
-    ]);
-    else if (/hébergement|hosting/.test(lower)) response = random([
-      "Nous proposons un hébergement rapide, sécurisé et évolutif. Souhaitez-vous une démo ? 🚀",
-      "Notre hébergement est optimisé pour la performance. Voulez-vous en savoir plus ?",
-      "Hébergement web fiable et support 24/7, ça vous intéresse ?"
-    ]);
-    else if (/contact/.test(lower)) response = random([
-      "Vous pouvez nous contacter via le formulaire de la page Contact ou ici même.",
-      "Notre équipe est joignable à tout moment via la page Contact.",
-      "Besoin d'un contact direct ? Je peux vous donner l'email du support."
-    ]);
-    else if (/merci|thanks/.test(lower)) response = random([
-      "Avec plaisir ! N'hésitez pas si vous avez d'autres questions. 😊",
-      "Je vous en prie ! Je reste à votre disposition.",
-      "Merci à vous ! Je suis là si besoin."
-    ]);
-    else if (/aide|support/.test(lower)) response = random([
-      "Je peux vous aider sur nos offres, la facturation ou l'assistance technique.",
-      "Dites-m'en plus sur votre besoin, je vous guide !",
-      "Support technique ou commercial, je transmets votre demande si besoin."
-    ]);
-    else if (/au revoir|bye|quit/.test(lower)) response = random([
-      "Au revoir ! Passez une excellente journée ! 👋",
-      "À bientôt sur notre site !",
-      "Merci de votre visite, à la prochaine !"
-    ]);
-    setTimeout(() => appendMessage(response, 'bot'), 700);
+    let typing = showTyping();
+    setTimeout(() => {
+      removeTyping(typing);
+      if (/bonjour|salut|hello/.test(lower)) response = random([
+        "Bonjour ! Comment puis-je vous assister aujourd'hui ? 😊",
+        "Salut ! Besoin d'aide ? Je suis là pour vous.",
+        "Hello ! Que puis-je faire pour vous ? 👋"
+      ]);
+      else if (/prix|tarif/.test(lower)) response = random([
+        "Nos plans commencent à 0€ pour l'offre gratuite. Plus de détails ?",
+        "Nous proposons plusieurs tarifs adaptés à vos besoins. Voulez-vous une brochure ? 💡",
+        "Les prix varient selon l'offre. Je peux vous guider si besoin !"
+      ]);
+      else if (/hébergement|hosting/.test(lower)) response = random([
+        "Nous proposons un hébergement rapide, sécurisé et évolutif. Souhaitez-vous une démo ? 🚀",
+        "Notre hébergement est optimisé pour la performance. Voulez-vous en savoir plus ?",
+        "Hébergement web fiable et support 24/7, ça vous intéresse ?"
+      ]);
+      else if (/contact/.test(lower)) response = random([
+        "Vous pouvez nous contacter via le formulaire de la page Contact ou ici même.",
+        "Notre équipe est joignable à tout moment via la page Contact.",
+        "Besoin d'un contact direct ? Je peux vous donner l'email du support."
+      ]);
+      else if (/merci|thanks/.test(lower)) response = random([
+        "Avec plaisir ! N'hésitez pas si vous avez d'autres questions. 😊",
+        "Je vous en prie ! Je reste à votre disposition.",
+        "Merci à vous ! Je suis là si besoin."
+      ]);
+      else if (/aide|support/.test(lower)) response = random([
+        "Je peux vous aider sur nos offres, la facturation ou l'assistance technique.",
+        "Dites-m'en plus sur votre besoin, je vous guide !",
+        "Support technique ou commercial, je transmets votre demande si besoin."
+      ]);
+      else if (/au revoir|bye|quit/.test(lower)) response = random([
+        "Au revoir ! Passez une excellente journée ! 👋",
+        "À bientôt sur notre site !",
+        "Merci de votre visite, à la prochaine !"
+      ]);
+      appendMessage(response, 'bot');
+    }, 900 + Math.random()*600);
   }
 
   // Message de bienvenue animé à l'ouverture
@@ -222,4 +244,29 @@
     input.value = '';
     botReply(val);
   };
+
+  // Ajout du style pour l'animation typing
+  if (!document.getElementById('cbt-typing-style')) {
+    const style = document.createElement('style');
+    style.id = 'cbt-typing-style';
+    style.innerHTML = `
+      .cbt-typing-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin: 0 2px;
+        background: #36d1c4;
+        border-radius: 50%;
+        opacity: 0.7;
+        animation: cbt-typing-bounce 1.2s infinite both;
+      }
+      .cbt-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+      .cbt-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+      @keyframes cbt-typing-bounce {
+        0%, 80%, 100% { transform: scale(0.8); opacity: 0.7; }
+        40% { transform: scale(1.2); opacity: 1; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
 })();

@@ -617,6 +617,8 @@ pre code {
 @media (min-width: 1200px) {
   .container {
     max-width: 1140px;
+    height: auto;
+    overflow: hidden;
   }
 }
 
@@ -10833,7 +10835,9 @@ h5,
 
 .owl-carousel.home-slider .slider-item .slider-text {
   color: #fff;
-  height: 750px;
+  height: 96vh;
+        margin-top: 15px;
+ 
 }
 
 @media (max-width: 767.98px) {
@@ -10844,20 +10848,18 @@ h5,
 
   .owl-carousel.home-slider .slider-item .slider-text {
     color: #fff;
-    height: 100vh;
     overflow: hidden;
-    margin-top:-31px;
+    margin-top: -31px;
   }
 
 }
 
 .owl-carousel.home-slider .slider-item .slider-text {
   color: #fff;
-  height: 100vh;
 }
 
 .owl-carousel.home-slider .slider-item .slider-text .wrap {
-  padding: 10px;
+  padding: 0px;
 }
 
 @media (min-width: 992px) {
@@ -10884,6 +10886,7 @@ h5,
     font-weight: bold;
     text-align: center;
   }
+  
 }
 
 .owl-carousel.home-slider .slider-item .slider-text p {
@@ -10925,7 +10928,7 @@ h5,
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#12e6ca', endColorstr='#8be55d', GradientType=1);
   border: none;
   border-radius: 7px;
-    width: 70%;
+  width: 70%;
 }
 
 .owl-carousel.home-slider .slider-item .slider-text .btn-primary.btn-primary-2 {
@@ -11339,6 +11342,9 @@ h5,
   .table tbody tr td:nth-child(odd) {
     background: #fcfcfc;
   }
+  .owl-stage-outer{
+        margin-bottom: 7vh;
+  }
 }
 
 #accordion .card {
@@ -11394,9 +11400,9 @@ h5,
   display: block;
   padding: 30px;
   background: #fff;
-  -webkit-box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
-  -moz-box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
-  box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  -webkit-box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  -moz-box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   -ms-border-radius: 4px;
@@ -12364,9 +12370,9 @@ textarea.form-control {
 }
 
 .ftco-section .tab-content .tab-pane .one-forth img {
-  -webkit-box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
-  -moz-box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
-  box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  -webkit-box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  -moz-box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
 
 @media (max-width: 767.98px) {
@@ -12785,9 +12791,9 @@ textarea.form-control {
 
 .block-7 {
   padding: 30px;
-  -webkit-box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
-  -moz-box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
-  box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  -webkit-box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  -moz-box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
   background: #fff;
 }
 
