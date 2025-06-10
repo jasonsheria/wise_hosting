@@ -10839,14 +10839,21 @@ h5,
 @media (max-width: 767.98px) {
   .owl-carousel.home-slider .slider-item .slider-text {
     text-align: center;
-    
+
   }
+
   .owl-carousel.home-slider .slider-item .slider-text {
-  color: #fff;
-  height: 750px;
-  margin-top: 0px;
+    color: #fff;
+    height: 100vh;
+    overflow: hidden;
+    margin-top: 0px;
+  }
+
 }
 
+.owl-carousel.home-slider .slider-item .slider-text {
+  color: #fff;
+  height: 100vh;
 }
 
 .owl-carousel.home-slider .slider-item .slider-text .wrap {
@@ -10857,11 +10864,10 @@ h5,
   .owl-carousel.home-slider .slider-item .slider-text .wrap {
     padding-left: 11%;
   }
+
   .owl-carousel.home-slider .slider-item .slider-text {
-  color: #fff;
-  height: 750px;
-  margin-top: -40px;
-}
+    color: #fff;
+  }
 }
 
 .owl-carousel.home-slider .slider-item .slider-text h1 {
@@ -10873,8 +10879,10 @@ h5,
 
 @media (max-width: 991.98px) {
   .owl-carousel.home-slider .slider-item .slider-text h1 {
-    font-size: 25px;
-    text-align:centr
+    font-size: 38px;
+    padding-top: 20px;
+    font-weight: bold;
+    text-align: center;
   }
 }
 
@@ -10916,6 +10924,8 @@ h5,
   background: linear-gradient(45deg, #12e6ca 0%, #8be55d 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#12e6ca', endColorstr='#8be55d', GradientType=1);
   border: none;
+  border-radius: 7px;
+    width: 70%;
 }
 
 .owl-carousel.home-slider .slider-item .slider-text .btn-primary.btn-primary-2 {
@@ -11384,9 +11394,9 @@ h5,
   display: block;
   padding: 30px;
   background: #fff;
-  -webkit-box-shadow:rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
-  -moz-box-shadow:rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
-  box-shadow:rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  -webkit-box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  -moz-box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   -ms-border-radius: 4px;
@@ -12354,9 +12364,9 @@ textarea.form-control {
 }
 
 .ftco-section .tab-content .tab-pane .one-forth img {
-  -webkit-box-shadow:rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
-  -moz-box-shadow:rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
-  box-shadow:rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  -webkit-box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  -moz-box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
 
 @media (max-width: 767.98px) {
@@ -12775,9 +12785,9 @@ textarea.form-control {
 
 .block-7 {
   padding: 30px;
-  -webkit-box-shadow:rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
-  -moz-box-shadow:rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
-  box-shadow:rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  -webkit-box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  -moz-box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  box-shadow:rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
   background: #fff;
 }
 

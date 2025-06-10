@@ -50,7 +50,7 @@
   </nav>
   <!-- END nav -->
 
-  <section class="home-slider owl-carousel" style="overflow: visible !important; touch-action: pan-y !important;">
+  <section class="home-slider owl-carousel" style="overflow-x: auto; overflow-y: visible; touch-action: auto;">
     <div class="slider-item" style="background-image: url(images/bg_1.jpg);">
       <div class="overlay"></div>
       <div class="container-fluid">
@@ -74,7 +74,7 @@
       </div>
     </div>
 
-    <!-- <div class="slider-item" style="background-image: url(images/bg_2.jpg);">
+    <div class="slider-item" style="background-image: url(images/bg_2.jpg);">
       <div class="overlay"></div>
       <div class="container-fluid">
         <div class="row slider-text align-items-center" data-scrollax-parent="true">
@@ -115,7 +115,7 @@
         </div>
         
       </div>
-    </div> -->
+    </div>
   </section>
   
   <section class="ftco-domain">
@@ -764,21 +764,26 @@
     
   
   <style>
-    /* Désactive tous les scrollbars personnalisés, laisse le scroll natif automatique */
+    /* Laisse le scroll vertical natif automatique, supprime toute contrainte sur overflow et touch-action */
     html, body, .home-slider, .owl-carousel, .slider-item, .slider-text, .container-fluid, .row {
-      overflow: visible !important;
-      overscroll-behavior: auto !important;
-      -webkit-overflow-scrolling: touch !important;
-      scrollbar-width: auto !important;
-      touch-action: pan-y !important;
+      overflow-x: auto;
+      overflow-y: visible;
+      overscroll-behavior: auto;
+      -webkit-overflow-scrolling: auto;
+      scrollbar-width: auto;
+      touch-action: auto;
     }
-    /* Désactive le drag horizontal sur Owl Carousel pour permettre le scroll vertical natif sur mobile */
     .owl-carousel {
-      -ms-touch-action: pan-y !important;
-      touch-action: pan-y !important;
+      -ms-touch-action: auto;
+      touch-action: auto;
     }
-    /* Masque les scrollbars personnalisés si présents */
-    ::-webkit-scrollbar { display: none !important; }
+    /* Désactive le scroll horizontal forcé */
+    .home-slider, .owl-carousel, .slider-item, .slider-text {
+      overflow-x: auto !important;
+      overflow-y: visible !important;
+    }
+    /* Masque les scrollbars personnalisés si présents (optionnel) */
+    ::-webkit-scrollbar { display: none; }
   </style>
 
   <!-- loader -->
@@ -803,5 +808,71 @@
   <script src="js/google-map.js"></script>
   <script src="js/main.js"></script>
     
+  <!-- Chatbot Component Start -->
+<div id="chatbot-widget" style="position:fixed;bottom:30px;right:30px;z-index:9999;">
+  <button id="chatbot-toggle" aria-label="Ouvrir le chatbot" style="background:#007bff;border:none;border-radius:50%;width:60px;height:60px;box-shadow:0 2px 8px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+    <span style="font-size:2rem;color:#fff;">💬</span>
+  </button>
+  <div id="chatbot-window" style="display:none;flex-direction:column;width:340px;height:480px;max-width:90vw;max-height:80vh;background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.18);overflow:hidden;">
+    <div style="background:#007bff;color:#fff;padding:16px 20px;font-weight:bold;display:flex;align-items:center;justify-content:space-between;">
+      <span>Assistant WiseBot</span>
+      <button id="chatbot-close" aria-label="Fermer" style="background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;">&times;</button>
+    </div>
+    <div id="chatbot-messages" style="flex:1;padding:16px;overflow-y:auto;background:#f8f9fa;"></div>
+    <form id="chatbot-form" style="display:flex;padding:12px 16px;border-top:1px solid #eee;gap:8px;">
+      <input id="chatbot-input" type="text" placeholder="Écrivez votre message..." autocomplete="off" style="flex:1;padding:8px 12px;border-radius:8px;border:1px solid #ccc;outline:none;" required />
+      <button type="submit" style="background:#007bff;color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;">Envoyer</button>
+    </form>
+  </div>
+</div>
+<!-- Chatbot Component End -->
+
+<script>
+(function() {
+  const toggleBtn = document.getElementById('chatbot-toggle');
+  const windowEl = document.getElementById('chatbot-window');
+  const closeBtn = document.getElementById('chatbot-close');
+  const form = document.getElementById('chatbot-form');
+  const input = document.getElementById('chatbot-input');
+  const messages = document.getElementById('chatbot-messages');
+
+  function appendMessage(text, from) {
+    const msg = document.createElement('div');
+    msg.style.margin = '8px 0';
+    msg.style.display = 'flex';
+    msg.style.justifyContent = from === 'user' ? 'flex-end' : 'flex-start';
+    msg.innerHTML = `<span style="background:${from==='user'?'#007bff':'#e9ecef'};color:${from==='user'?'#fff':'#333'};padding:8px 14px;border-radius:14px;max-width:80%;display:inline-block;">${text}</span>`;
+    messages.appendChild(msg);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function botReply(userText) {
+    // Simule une réponse avancée (à remplacer par une API IA si besoin)
+    let response = "Je suis WiseBot, comment puis-je vous aider ?";
+    if (/bonjour|salut|hello/i.test(userText)) response = "Bonjour ! Comment puis-je vous assister aujourd'hui ?";
+    else if (/prix|tarif/i.test(userText)) response = "Nos plans commencent à 0$ pour l'offre gratuite. Voulez-vous plus de détails ?";
+    else if (/hébergement|hosting/i.test(userText)) response = "Nous proposons un hébergement rapide, sécurisé et évolutif. Souhaitez-vous une démo ?";
+    else if (/contact/i.test(userText)) response = "Vous pouvez nous contacter via le formulaire de la page Contact ou ici même.";
+    else if (/merci|thanks/i.test(userText)) response = "Avec plaisir ! N'hésitez pas si vous avez d'autres questions.";
+    setTimeout(() => appendMessage(response, 'bot'), 600);
+  }
+
+  toggleBtn.onclick = () => {
+    windowEl.style.display = windowEl.style.display === 'flex' ? 'none' : 'flex';
+    if(windowEl.style.display === 'flex') input.focus();
+  };
+  closeBtn.onclick = () => windowEl.style.display = 'none';
+  form.onsubmit = e => {
+    e.preventDefault();
+    const val = input.value.trim();
+    if(!val) return;
+    appendMessage(val, 'user');
+    input.value = '';
+    botReply(val);
+  };
+})();
+</script>
+  <!-- Chatbot import -->
+  <script src="js/chatbot.js"></script>
   </body>
 </html>
