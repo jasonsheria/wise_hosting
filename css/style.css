@@ -10788,7 +10788,7 @@ h5,
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
-  height: 100vh;
+  height: auto;
   position: relative;
   z-index: 0;
   overflow: hidden;
@@ -10846,7 +10846,7 @@ h5,
     color: #fff;
     height: 100vh;
     overflow: hidden;
-    margin-top: 0px;
+    margin-top:-31px;
   }
 
 }
