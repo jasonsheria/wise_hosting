@@ -10835,7 +10835,7 @@ h5,
 
 .owl-carousel.home-slider .slider-item .slider-text {
   color: #fff;
-  height: 96vh;
+  /* height: 96vh; */
         margin-top: 15px;
  
 }
@@ -10881,7 +10881,7 @@ h5,
 
 @media (max-width: 991.98px) {
   .owl-carousel.home-slider .slider-item .slider-text h1 {
-    font-size: 38px;
+    font-size: 27px;
     padding-top: 20px;
     font-weight: bold;
     text-align: center;
