@@ -1,4 +1,4 @@
-AOS.init({
+ AOS.init({
  	duration: 800,
  	easing: 'slide'
  });
@@ -66,14 +66,8 @@ AOS.init({
 	        items:1,
 	        nav:false
 	      }
-	    },
-	    // Désactive le drag pour éviter tout conflit avec le scroll natif
-	    mouseDrag: false,
-	    touchDrag: false,
-	    pullDrag: false,
-	    freeDrag: false
+	    }
 		});
-
 		$('.carousel-testimony').owlCarousel({
 			center: true,
 			loop: true,
