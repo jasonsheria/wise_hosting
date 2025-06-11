@@ -11007,6 +11007,7 @@ h5,
 @media (max-width: 767.98px) {
   .owl-carousel.home-slider .owl-dots {
     bottom: 5px;
+    display:none;
   }
 }
 
@@ -12155,6 +12156,8 @@ textarea.form-control {
 
 .testimony-section .owl-carousel {
   margin: 0;
+  heigth: 100%;
+  overflow:hidden;
 }
 
 .testimony-section .owl-carousel .owl-stage-outer {

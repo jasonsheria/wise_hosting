@@ -49,12 +49,15 @@ function showGoogleLoginNotification() {
   notif.id = 'google-login-notif';
   notif.style = `
     position:fixed;top:24px;left:50%;transform:translateX(-50%);
-    background:#fff;border-radius:12px;box-shadow:0 4px 24px #0002;
-    padding:18px 32px;z-index:99999;display:flex;align-items:center;gap:18px;
-    font-size:1.1rem;animation:fadeIn 0.5s;
+    background:linear-gradient(135deg,#e0f7fa 60%,#e3e6ff 100%);
+    border-radius:20px;box-shadow:0 8px 32px #36d1c422;
+    padding:22px 38px 28px 38px;z-index:99999;display:flex;align-items:center;gap:18px;
+    font-size:1.13rem;font-weight:500;min-width:320px;max-width:96vw;
+    animation:fadeInNotif 0.7s cubic-bezier(.4,2,.6,1);
+    justify-content:center;pointer-events:auto;transition:box-shadow 0.2s, background 0.2s;overflow:visible;
   `;
   notif.innerHTML = `
-    <span>Connectez-vous avec Google pour profiter de toutes les fonctionnalités !</span>
+    <span style="display:block;text-align:center;font-size:1.08em;flex:1;font-weight:600;letter-spacing:0.01em;">Connectez-vous avec Google pour profiter de toutes les fonctionnalités !</span>
     <div id="g_id_onload"
       data-client_id="900358554333-g3k99qk3da90po7cc3ajm5cv8oq2dkda.apps.googleusercontent.com"
       data-callback="onGoogleSignIn"
@@ -68,11 +71,68 @@ function showGoogleLoginNotification() {
       data-size="large"
       data-logo_alignment="left">
     </div>
-    <button id="notif-close" style="margin-left:12px;background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+    <button id="notif-close" style="margin-left:12px;background:linear-gradient(135deg,#36d1c4,#5b86e5);color:#fff;border:none;border-radius:50%;width:36px;height:36px;font-size:1.5rem;cursor:pointer;line-height:1.1;box-shadow:0 2px 8px #36d1c422;transition:background 0.2s;position:absolute;top:12px;right:12px;display:flex;align-items:center;justify-content:center;">&times;</button>
     <style>
-      @keyframes fadeIn {from{opacity:0;transform:translateY(-30px);}to{opacity:1;transform:translateY(0);}}
+      @keyframes fadeInNotif {from{opacity:0;transform:translateY(-40px) scale(0.95);}to{opacity:1;transform:translateY(0) scale(1);}}
+      @media (max-width: 600px) {
+        #google-login-notif {
+          left: 0 !important;
+          right: 0 !important;
+          top: 0 !important;
+          transform: none !important;
+          width: 98vw !important;
+          min-width: 0 !important;
+          max-width: 98vw !important;
+          border-radius: 0 0 18px 18px !important;
+          padding: 18px 4vw 22px 4vw !important;
+          font-size: 1.01rem !important;
+          box-shadow: 0 4px 24px #0002;
+          z-index: 99999 !important;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+          background: linear-gradient(135deg,#e0f7fa 60%,#e3e6ff 100%) !important;
+          position: fixed !important;
+          justify-content: center;
+        }
+        #google-login-notif .g_id_signin {
+          width: 100% !important;
+          min-width: 0 !important;
+          display: flex;
+          justify-content: center;
+        }
+        #notif-close {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          font-size: 2rem !important;
+          width: 36px !important;
+          height: 36px !important;
+        }
+      }
     </style>
   `;
+  // Animation d'apparition avec anime.js si dispo
+  setTimeout(() => {
+    if (window.anime) {
+      notif.style.opacity = '0';
+      notif.style.transform = 'translateX(-50%) translateY(-40px) scale(0.95)';
+      document.body.appendChild(notif);
+      window.anime({
+        targets: notif,
+        opacity: [0, 1],
+        translateY: [-40, 0],
+        scale: [0.95, 1],
+        duration: 900,
+        easing: 'easeOutElastic(1, .7)'
+      });
+    } else {
+      document.body.appendChild(notif);
+    }
+    notif.querySelector('#notif-close').onclick = () => notif.remove();
+    setTimeout(() => notif.remove(), 12000);
+  }, 0);
   // Forcer le rendu du bouton Google
   function tryRenderGoogleButton(attempt = 0) {
     if (isGoogleScriptLoaded()) {
