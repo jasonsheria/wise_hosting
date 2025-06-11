@@ -1,4 +1,4 @@
- AOS.init({
+AOS.init({
  	duration: 800,
  	easing: 'slide'
  });
@@ -31,13 +31,17 @@
 
 	// loader
 	var loader = function() {
-		setTimeout(function() { 
-			if($('#ftco-loader').length > 0) {
-				$('#ftco-loader').removeClass('show');
-			}
-		}, 1);
-	};
-	loader();
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      if($('#ftco-loader').length > 0) {
+        $('#ftco-loader').removeClass('show');
+        // Déclenche un événement custom pour signaler la fin du preloader
+        window.dispatchEvent(new Event('preloader:done'));
+      }
+    }, 800); // délai pour un effet visuel
+  });
+};
+loader();
 
 	// Scrollax
    $.Scrollax();

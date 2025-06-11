@@ -4716,6 +4716,8 @@ input[type="button"].btn-block {
     display: flex !important;
     -ms-flex-preferred-size: auto;
     flex-basis: auto;
+ 
+
   }
 
   .navbar-expand-sm .navbar-toggler {
@@ -4724,7 +4726,12 @@ input[type="button"].btn-block {
 }
 
 @media (max-width: 767.98px) {
+  .navbar-expand-sm .navbar-collapse {
+    height :100vh;
+    overflow: hidden;
+    padding-top: 5vh
 
+  }
   .navbar-expand-md>.container,
   .navbar-expand-md>.container-fluid {
     padding-right: 0;
@@ -10836,7 +10843,7 @@ h5,
 .owl-carousel.home-slider .slider-item .slider-text {
   color: #fff;
   /* height: 96vh; */
-        margin-top: 15px;
+        margin-top: 55px;
  
 }
 
@@ -13376,6 +13383,7 @@ textarea.form-control {
   -webkit-transform: none;
   -ms-transform: none;
   transform: none;
+      z-index: 10000;
   background-color: #fff;
   border-radius: 0;
   -webkit-box-shadow: none;

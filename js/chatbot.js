@@ -23,11 +23,36 @@
       <span style=\"display:flex;align-items:center;gap:8px;\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 32 32\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"4\" y=\"7\" width=\"24\" height=\"16\" rx=\"8\" fill=\"url(#chatbot-bubble-gradient)\"/><ellipse cx=\"12\" cy=\"15\" rx=\"2\" ry=\"2\" fill=\"#fff\"/><ellipse cx=\"16\" cy=\"15\" rx=\"2\" ry=\"2\" fill=\"#fff\"/><ellipse cx=\"20\" cy=\"15\" rx=\"2\" ry=\"2\" fill=\"#fff\"/></svg> WiseBot</span>\
       <button id=\"chatbot-close\" aria-label=\"Fermer\" style=\"background:none;border:none;color:#fff;font-size:2rem;cursor:pointer;transition:color 0.2s;\">&times;</button>\
     </div>\
-    <div id=\"chatbot-messages\" style=\"flex:1;padding:18px;overflow-y:auto;background:linear-gradient(120deg,#e0f7fa 60%,#e3e6ff 100%);scroll-behavior:smooth;\"></div>\
-    <form id=\"chatbot-form\" style=\"display:flex;padding:14px 18px;border-top:1px solid #e3e6ff;gap:10px;background:#e0f7fa;\">\
-      <input id=\"chatbot-input\" type=\"text\" placeholder=\"Écrivez votre message...\" autocomplete=\"off\" style=\"flex:1;padding:10px 14px;border-radius:12px;border:1px solid #36d1c4;outline:none;font-size:1rem;transition:border 0.2s;box-shadow:0 1px 4px rgba(54,209,196,0.08);\" required />\
-      <button type=\"submit\" style=\"background:linear-gradient(135deg,#36d1c4,#5b86e5);color:#fff;border:none;border-radius:12px;padding:10px 20px;cursor:pointer;font-weight:600;box-shadow:0 2px 8px rgba(54,209,196,0.08);transition:background 0.2s;\">Envoyer</button>\
-    </form>\
+    <div id=\"chatbot-tabs\" style=\"display:flex;flex-direction:row;justify-content:space-between;align-items:center;background:#e3e6ff;padding:0 0 0 0;\">\
+      <button class=\"cbt-tab-btn active\" data-tab=\"quick\" style=\"flex:1;padding:12px 0;border:none;background:none;font-weight:600;color:#36d1c4;font-size:1rem;cursor:pointer;transition:background 0.2s;\">Questions rapides</button>\
+      <button class=\"cbt-tab-btn\" data-tab=\"chat\" style=\"flex:1;padding:12px 0;border:none;background:none;font-weight:600;color:#36d1c4;font-size:1rem;cursor:pointer;transition:background 0.2s;\">Discussions</button>\
+      <button class=\"cbt-tab-btn\" data-tab=\"profile\" style=\"flex:1;padding:12px 0;border:none;background:none;font-weight:600;color:#36d1c4;font-size:1rem;cursor:pointer;transition:background 0.2s;\">Profil</button>\
+    </div>\
+    <div id=\"chatbot-tab-content\" style=\"flex:1;display:flex;flex-direction:column;overflow:hidden;\">\
+      <div id=\"chatbot-quick\" class=\"cbt-tab-panel\" style=\"display:block;flex:1;overflow-y:auto;padding:18px;\">\
+        <div style=\"display:flex;flex-wrap:wrap;gap:10px;\">\
+          <button class=\"cbt-quick-btn\" style=\"background:linear-gradient(135deg,#36d1c4,#5b86e5);color:#fff;border:none;border-radius:12px;padding:10px 16px;cursor:pointer;font-weight:500;box-shadow:0 2px 8px rgba(54,209,196,0.08);margin-bottom:8px;\">Quels sont vos tarifs ?</button>\
+          <button class=\"cbt-quick-btn\" style=\"background:linear-gradient(135deg,#36d1c4,#5b86e5);color:#fff;border:none;border-radius:12px;padding:10px 16px;cursor:pointer;font-weight:500;box-shadow:0 2px 8px rgba(54,209,196,0.08);margin-bottom:8px;\">Comment contacter le support ?</button>\
+          <button class=\"cbt-quick-btn\" style=\"background:linear-gradient(135deg,#36d1c4,#5b86e5);color:#fff;border:none;border-radius:12px;padding:10px 16px;cursor:pointer;font-weight:500;box-shadow:0 2px 8px rgba(54,209,196,0.08);margin-bottom:8px;\">Proposez-vous un essai gratuit ?</button>\
+          <button class=\"cbt-quick-btn\" style=\"background:linear-gradient(135deg,#36d1c4,#5b86e5);color:#fff;border:none;border-radius:12px;padding:10px 16px;cursor:pointer;font-weight:500;box-shadow:0 2px 8px rgba(54,209,196,0.08);margin-bottom:8px;\">Quels sont vos horaires ?</button>\
+        </div>\
+      </div>\
+      <div id=\"chatbot-chat\" class=\"cbt-tab-panel\" style=\"display:none;flex:1;flex-direction:column;overflow-y:auto;\">\
+        <div id=\"chatbot-messages\" style=\"flex:1;padding:0 0 0 0;overflow-y:auto;background:none;scroll-behavior:smooth;\"></div>\
+        <form id=\"chatbot-form\" style=\"display:flex;padding:14px 18px;border-top:1px solid #e3e6ff;gap:10px;background:#e0f7fa;\">\
+          <input id=\"chatbot-input\" type=\"text\" placeholder=\"Écrivez votre message...\" autocomplete=\"off\" style=\"flex:1;padding:10px 14px;border-radius:12px;border:1px solid #36d1c4;outline:none;font-size:1rem;transition:border 0.2s;box-shadow:0 1px 4px rgba(54,209,196,0.08);\" required />\
+          <button type=\"submit\" style=\"background:linear-gradient(135deg,#36d1c4,#5b86e5);color:#fff;border:none;border-radius:12px;padding:10px 20px;cursor:pointer;font-weight:600;box-shadow:0 2px 8px rgba(54,209,196,0.08);transition:background 0.2s;\">Envoyer</button>\
+        </form>\
+      </div>\
+      <div id=\"chatbot-profile\" class=\"cbt-tab-panel\" style=\"display:none;flex:1;overflow-y:auto;padding:18px;\">\
+        <div style=\"display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:18px;\">\
+          <img src=\"https://ui-avatars.com/api/?name=User&background=36d1c4&color=fff&size=80\" alt=\"Avatar\" style=\"width:80px;height:80px;border-radius:50%;box-shadow:0 2px 8px #36d1c422;\" />\
+          <div style=\"font-size:1.1rem;font-weight:600;color:#36d1c4;\">Utilisateur invité</div>\
+          <div style=\"font-size:0.98rem;color:#555;text-align:center;\">Connectez-vous pour profiter de toutes les fonctionnalités du chatbot.</div>\
+          <button style=\"background:linear-gradient(135deg,#36d1c4,#5b86e5);color:#fff;border:none;border-radius:12px;padding:10px 24px;cursor:pointer;font-weight:600;box-shadow:0 2px 8px rgba(54,209,196,0.08);transition:background 0.2s;\">Se connecter</button>\
+        </div>\
+      </div>\
+    </div>\
   </div>\
 </div>\
 <!-- Chatbot Component End -->\
@@ -59,6 +84,17 @@
 #chatbot-messages > div {\
   animation: cbt-msg-in 0.4s cubic-bezier(.4,2,.6,1);\
   transition: box-shadow 0.2s;\
+}\
+.cbt-tab-btn.active {\
+  background:linear-gradient(135deg,#36d1c4,#5b86e5);\
+  color:#fff!important;\
+  border-radius:0 0 0 0;\
+}\
+.cbt-tab-btn {\
+  border-bottom:2px solid transparent;\
+}\
+.cbt-tab-btn:not(.active):hover {\
+  background:#e0f7fa;\
 }\
 </style>`;
   if (!document.getElementById('chatbot-widget')) {
@@ -173,6 +209,42 @@
   // Message de bienvenue animé à l'ouverture
   let welcomeShown = false;
   let animating = false;
+  // --- TABS LOGIC ---
+  const tabBtns = [];
+  const tabPanels = {
+    quick: null,
+    chat: null,
+    profile: null
+  };
+  setTimeout(() => {
+    // Get tab buttons and panels
+    document.querySelectorAll('.cbt-tab-btn').forEach(btn => {
+      tabBtns.push(btn);
+      btn.onclick = function() {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        Object.keys(tabPanels).forEach(k => {
+          if(document.getElementById('chatbot-' + k))
+            document.getElementById('chatbot-' + k).style.display = (btn.dataset.tab === k) ? (k==='chat'?'flex':'block') : 'none';
+        });
+      };
+    });
+    tabPanels.quick = document.getElementById('chatbot-quick');
+    tabPanels.chat = document.getElementById('chatbot-chat');
+    tabPanels.profile = document.getElementById('chatbot-profile');
+    // Default: show quick tab
+    tabBtns[0].click();
+    // Quick question buttons
+    tabPanels.quick.querySelectorAll('.cbt-quick-btn').forEach(btn => {
+      btn.onclick = function() {
+        // Switch to chat tab and send question
+        tabBtns[1].click();
+        input.value = btn.textContent;
+        form.dispatchEvent(new Event('submit', {bubbles:true}));
+      };
+    });
+  }, 100);
+
   function showBot() {
     if(animating) return;
     windowEl.classList.remove('cbt-open', 'cbt-closed', 'animate__fadeOutDown', 'animate__animated');
@@ -196,7 +268,10 @@
         animating = false;
       }
     }, 10);
-    input.focus();
+    // Focus input only if chat tab is active
+    setTimeout(()=>{
+      if(document.querySelector('.cbt-tab-btn.active')?.dataset.tab==='chat') input.focus();
+    }, 400);
     animating = true;
     if(!welcomeShown) {
       setTimeout(()=>appendMessage(getWelcomeMessage(), 'bot', true), 500);
