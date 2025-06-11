@@ -81,13 +81,13 @@ function chatbotInit() {
     height: 62vh !important;\
     min-width: 0 !important;\
     max-width: 100vw !important;\
-    border-radius:25px !important;\
+    border-radius: 15px !important;\
     left: 0 !important;\
     margin-left: 5px !important;\
     right: 0 !important;\
     top: 0 !important;\
     bottom: 0 !important;\
-    margin-bottom: 68px !important;\
+    margin-bottom: 50px !important;\
     box-shadow: none !important;\
   }\
   #chatbot-tab-content, #chatbot-messages { padding: 0 !important; }\

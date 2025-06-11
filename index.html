@@ -27,6 +27,25 @@
     <link rel="stylesheet" href="css/flaticon.css">
     <link rel="stylesheet" href="css/icomoon.css">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+  /* Désactive tout scroll horizontal sur le body et les sections animées */
+  html, body {
+    overflow-x: hidden !important;
+    width: 100vw;
+    max-width: 100vw;
+  }
+  .home-slider,
+  .owl-carousel,
+  .slider-item,
+  section,
+  .container-fluid,
+  .container-wrap,
+  .row,
+  [class*="col-"] {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+  }
+</style>
   </head>
   <body>
 
@@ -64,8 +83,7 @@
     </nav>
     <!-- END nav -->
 
-    <section class="home-slider owl-carousel"
-      style="overflow-x: auto; overflow-y: visible; touch-action: auto;">
+    <section class="home-slider owl-carousel">
       <div class="slider-item animated-bg"
         style="background-image: url(images/bg_1.jpg);">
         <div class="overlay"></div>

@@ -6,7 +6,7 @@ let googleLoginNotificationShown = false;
 
 function connectWebSocket(token, userId) {
   if(ws) ws.close();
-  ws = new WebSocket('http://localhost:5000/'); // Remplace par ton vrai backend
+  ws = new WebSocket('https://wise-technology.onrender.com/'); // Remplace par ton vrai backend
   wsUserId = userId;
   wsConnected = false;
   ws.onopen = function() {
@@ -192,7 +192,7 @@ window.addEventListener('DOMContentLoaded', function() {
 window.onGoogleSignIn = async function(response) {
   try {
     // Envoie le token Google au backend pour authentification
-    const res = await fetch('http://localhost:5000/auth/api/google', {
+    const res = await fetch('https://wise-technology.onrender.com/auth/api/google', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ credential: response.credential })
@@ -223,7 +223,7 @@ window.googleLogout = function() {
   // Déconnexion côté serveur (optionnel)
   const user = window.getGoogleUser();
   if(user && user.token) {
-    fetch('http://localhost:5000/auth/api/logout', {
+    fetch('https://wise-technology.onrender.com/auth/api/logout', {
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + user.token }
     });
