@@ -5,37 +5,52 @@ let wsUserId = null;
 let googleLoginNotificationShown = false;
 
 function connectWebSocket(token, userId) {
-  if(ws) ws.close();
-  ws = new WebSocket('https://wise-server.onrender.com'); // Remplace par ton vrai backend
+  if (typeof io === 'undefined') {
+    console.error('[GoogleAuth] Socket.IO client (io) is not loaded!');
+    return;
+  }
+  console.log('[GoogleAuth] connectWebSocket called. Token present:', !!token, 'UserId:', userId);
+  if(ws) {
+    console.log('[GoogleAuth] Closing existing WebSocket connection.');
+    ws.close();
+  }
+  // Use Socket.IO client, not native WebSocket
+  ws = io('http://localhost:5000', {
+    auth: { token },
+    transports: ['websocket']
+  });
   wsUserId = userId;
   wsConnected = false;
-  ws.onopen = function() {
+  console.log('[GoogleAuth] Socket.IO: Attempting to connect...');
+
+  ws.on('connect', function() {
     wsConnected = true;
-    // Authentification initiale via token
-    ws.send(JSON.stringify({ type: 'auth', token }));
-  };
-  ws.onmessage = function(e) {
-    try {
-      const msg = JSON.parse(e.data);
-      if(msg.type === 'logout' && msg.userId === wsUserId) {
-        // Déconnexion serveur
-        localStorage.removeItem('googleUser');
-        showAuthNotification('Vous avez été déconnecté(e) du serveur.', 'error');
-        setTimeout(() => location.reload(), 1200);
-      }
-      // Ajoute ici d'autres types de messages si besoin
-    } catch {}
-  };
-  ws.onclose = function() {
+    console.log('[GoogleAuth] Socket.IO: Connection opened. Socket ID:', ws.id);
+    // Authentification initiale via token is already handled by backend middleware
+    // If you need to send a custom event, do it here
+    // ws.emit('identify', { userId });
+  });
+
+  ws.on('disconnect', function(reason) {
     wsConnected = false;
-    // Tentative de reconnexion après 2s si user toujours connecté
-    if(localStorage.getItem('googleUser')) {
-      setTimeout(() => {
-        const user = JSON.parse(localStorage.getItem('googleUser'));
-        if(user && user.token && user._id) connectWebSocket(user.token, user._id);
-      }, 2000);
+    console.log('[GoogleAuth] Socket.IO: Disconnected. Reason:', reason);
+  });
+
+  ws.on('connect_error', function(error) {
+    wsConnected = false;
+    console.error('[GoogleAuth] Socket.IO: Connection error.', error);
+  });
+
+  // Example: handle custom events from backend
+  ws.on('logout', function(msg) {
+    if(msg.userId === wsUserId) {
+      localStorage.removeItem('googleUser');
+      showAuthNotification('Vous avez été déconnecté(e) du serveur.', 'error');
+      setTimeout(() => location.reload(), 1200);
     }
-  };
+  });
+
+  // ...add other event handlers as needed...
 }
 
 function isGoogleScriptLoaded() {
@@ -43,7 +58,11 @@ function isGoogleScriptLoaded() {
 }
 
 function showGoogleLoginNotification() {
-  if (googleLoginNotificationShown) return;
+  console.log('[GoogleAuth] showGoogleLoginNotification called.');
+  if (googleLoginNotificationShown) {
+    console.log('[GoogleAuth] Google login notification already shown or in process.');
+    return;
+  }
   googleLoginNotificationShown = true;
   const notif = document.createElement('div');
   notif.id = 'google-login-notif';
@@ -129,13 +148,24 @@ function showGoogleLoginNotification() {
       });
     } else {
       document.body.appendChild(notif);
+      console.log('[GoogleAuth] Appended Google login notification (no anime.js).');
     }
-    notif.querySelector('#notif-close').onclick = () => notif.remove();
-    setTimeout(() => notif.remove(), 12000);
+    notif.querySelector('#notif-close').onclick = () => {
+      console.log('[GoogleAuth] Google login notification closed by user.');
+      notif.remove();
+    };
+    setTimeout(() => {
+      if (document.body.contains(notif)) {
+        console.log('[GoogleAuth] Google login notification timed out and removed.');
+        notif.remove();
+      }
+    }, 12000);
   }, 0);
   // Forcer le rendu du bouton Google
   function tryRenderGoogleButton(attempt = 0) {
+    console.log('[GoogleAuth] tryRenderGoogleButton attempt:', attempt);
     if (isGoogleScriptLoaded()) {
+      console.log('[GoogleAuth] Google script is loaded. Initializing and rendering button.');
       // Initialiser Google Identity Services une seule fois
       if (!window._googleIdInitialized) {
         window.google.accounts.id.initialize({
@@ -156,56 +186,72 @@ function showGoogleLoginNotification() {
             document.body.appendChild(notif);
             notif.querySelector('#notif-close').onclick = () => notif.remove();
             setTimeout(() => notif.remove(), 12000);
-            console.log('[GoogleAuth] Notification affichée.');
           }
+          console.log('[GoogleAuth] Google sign-in button rendered successfully in notification.');
         } else if (attempt < 20) {
+          console.log('[GoogleAuth] Google button not rendered yet, retrying...');
           setTimeout(() => tryRenderGoogleButton(attempt + 1), 500);
         } else {
           console.warn('[GoogleAuth] Impossible de rendre le bouton Google après plusieurs tentatives.');
         }
       }, 200);
     } else if (attempt < 20) {
+      console.log('[GoogleAuth] Google script not loaded yet, retrying renderButton...');
       setTimeout(() => tryRenderGoogleButton(attempt + 1), 500);
     } else {
-      console.warn('[GoogleAuth] Script Google non chargé après plusieurs tentatives.');
+      console.warn('[GoogleAuth] Script Google non chargé après plusieurs tentatives. Cannot render button.');
     }
   }
   tryRenderGoogleButton();
 }
 
 function waitForPreloaderAndGoogleScript() {
+  console.log('[GoogleAuth] waitForPreloaderAndGoogleScript called.');
   let preloaderDone = false;
   let maxWait = 15000; // 15s timeout
   let start = Date.now();
 
   function checkReady() {
     if (preloaderDone && isGoogleScriptLoaded()) {
+      console.log('[GoogleAuth] Preloader done and Google script loaded. Showing login notification.');
       showGoogleLoginNotification();
     } else if (Date.now() - start < maxWait && !googleLoginNotificationShown) {
+      // console.log('[GoogleAuth] checkReady: Waiting for conditions to be met.');
       setTimeout(checkReady, 200);
     } else if (!googleLoginNotificationShown) {
+      console.warn('[GoogleAuth] Timeout waiting for preloader or Google script.');
       // Affiche quand même la notif si Google script trop lent
-      if (preloaderDone) showGoogleLoginNotification();
+      if (preloaderDone) {
+        console.log('[GoogleAuth] Preloader done, but Google script might be slow. Showing notification anyway.');
+        showGoogleLoginNotification();
+      }
       else console.warn('[GoogleAuth] Preloader non terminé après 15s.');
     }
   }
 
   // Attendre la fin du preloader
   if (document.getElementById('ftco-loader')) {
+    console.log('[GoogleAuth] Waiting for preloader:done event.');
     window.addEventListener('preloader:done', function handler() {
       preloaderDone = true;
+      console.log('[GoogleAuth] preloader:done event received.');
       window.removeEventListener('preloader:done', handler);
     });
   } else {
     preloaderDone = true;
+    console.log('[GoogleAuth] No preloader found, considering preloader as done.');
   }
 
   // Attendre que le script Google soit chargé
   function pollGoogleScript() {
     if (isGoogleScriptLoaded()) {
+      console.log('[GoogleAuth] Google script is now loaded (polled).');
       // nothing
     } else if (Date.now() - start < maxWait) {
+      // console.log('[GoogleAuth] Polling for Google script...');
       setTimeout(pollGoogleScript, 200);
+    } else {
+      console.warn('[GoogleAuth] Google script polling timed out.');
     }
   }
   pollGoogleScript();
@@ -213,6 +259,7 @@ function waitForPreloaderAndGoogleScript() {
 }
 
 function showAuthNotification(message, type = 'success') {
+  console.log(`[GoogleAuth] showAuthNotification: Type: ${type}, Message: ${message}`);
   // type: 'success' | 'error'
   const notif = document.createElement('div');
   notif.className = 'auth-toast-notif';
@@ -233,63 +280,133 @@ function showAuthNotification(message, type = 'success') {
     <button style="margin-left:12px;background:none;border:none;font-size:1.5rem;cursor:pointer;color:inherit;">&times;</button>
     <style>@keyframes fadeIn {from{opacity:0;transform:translateY(-30px);}to{opacity:1;transform:translateY(0);}}</style>
   `;
-  notif.querySelector('button').onclick = () => notif.remove();
+  notif.querySelector('button').onclick = () => {
+    console.log('[GoogleAuth] Auth toast notification closed by user.');
+    notif.remove();
+  };
   document.body.appendChild(notif);
-  setTimeout(() => notif.remove(), 5000);
+  setTimeout(() => {
+    if (document.body.contains(notif)) {
+      console.log('[GoogleAuth] Auth toast notification timed out and removed.');
+      notif.remove();
+    }
+  }, 5000);
 }
 
 window.addEventListener('DOMContentLoaded', function() {
+  console.log('[GoogleAuth] DOMContentLoaded event.');
   // Si déjà connecté, tente reconnexion WebSocket
-  const user = localStorage.getItem('googleUser');
-  if(user) {
-    const u = JSON.parse(user);
-    if(u.token && u._id) connectWebSocket(u.token, u._id);
+  const userRaw = localStorage.getItem('googleUser');
+  if(userRaw) {
+    console.log('[GoogleAuth] User data found in localStorage:', userRaw);
+    try {
+      const u = JSON.parse(userRaw);
+      // Ensure the structure matches what onGoogleSignIn saves: { token, user: { _id, name, email, ... } }
+      if(u.token && u.user && u.user._id) {
+        console.log('[GoogleAuth] Attempting WebSocket reconnect for user:', u.user._id);
+        connectWebSocket(u.token, u.user._id);
+      } else if (u.token && u._id) { // Fallback for older structure
+        console.log('[GoogleAuth] Attempting WebSocket reconnect for user (fallback structure):', u._id);
+        connectWebSocket(u.token, u._id);
+      }
+      else {
+        console.log('[GoogleAuth] User data in localStorage is incomplete for WebSocket connection.');
+      }
+    } catch (e) {
+      console.error('[GoogleAuth] Error parsing user data from localStorage on DOMContentLoaded:', e);
+      localStorage.removeItem('googleUser'); // Clear corrupted data
+      waitForPreloaderAndGoogleScript(); // Show login prompt
+    }
+    return; // Don't show login notification if user data exists (even if connection fails, it will retry)
+  }
+  if(localStorage.getItem('googleUser')) {
+    console.log('[GoogleAuth] User already logged in (second check), skipping login notification.');
     return;
   }
-  if(localStorage.getItem('googleUser')) return;
+  console.log('[GoogleAuth] No user data in localStorage, waiting for preloader/Google script to show login notification.');
   waitForPreloaderAndGoogleScript();
 });
+
 window.onGoogleSignIn = async function(response) {
+  console.log('[GoogleAuth] onGoogleSignIn callback triggered. Credential received:', !!response.credential);
   try {
     // Envoie le token Google au backend pour authentification
-    const res = await fetch('https://wise-server.onrender.com/auth/api/google', {
+    console.log('[GoogleAuth] Sending Google credential to backend for verification.');
+    const res = await fetch('http://localhost:5000/auth/api/google', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ credential: response.credential })
     });
-    if(!res.ok) throw new Error('Erreur serveur: ' + res.status);
+    if(!res.ok) {
+      const errorText = await res.text();
+      console.error('[GoogleAuth] Google sign-in backend error. Status:', res.status, 'Response:', errorText);
+      throw new Error('Erreur serveur: ' + res.status + ' - ' + errorText);
+    }
     const data = await res.json();
-    localStorage.setItem('googleUser', JSON.stringify(data));
-    if(data.token && data.user && data.user._id) connectWebSocket(data.token, data.user._id);
+    console.log('[GoogleAuth] Google sign-in successful. Backend response:', data);
+    localStorage.setItem('googleUser', JSON.stringify(data)); // data should be { token, user: { _id, name, email, ... } }
+    if(data.token && data.user && data.user._id) {
+      if (typeof io !== 'undefined') {
+        console.log('[GoogleAuth] Connecting WebSocket post-login for user:', data.user._id);
+        connectWebSocket(data.token, data.user._id);
+      } else {
+        console.error('[GoogleAuth] Socket.IO client (io) is not loaded!');
+      }
+    } else {
+      console.error('[GoogleAuth] Backend response missing token or user._id after Google sign-in.', data);
+    }
     showAuthNotification('Bienvenue, ' + (data.user.name || data.user.email) + ' !', 'success');
     const notif = document.getElementById('google-login-notif');
-    if(notif) notif.remove();
-    setTimeout(() => location.reload(), 1200);
+    if(notif) {
+      console.log('[GoogleAuth] Removing Google login notification.');
+      notif.remove();
+    }
+    setTimeout(() => {
+      console.log('[GoogleAuth] Reloading page after successful login.');
+      location.reload();
+    }, 1200);
   } catch(e) {
+    console.error('[GoogleAuth] Error during Google sign-in process:', e);
     showAuthNotification('Erreur de connexion Google: ' + (e.message || e), 'error');
   }
 };
 
 window.getGoogleUser = function() {
   try {
-    const user = JSON.parse(localStorage.getItem('googleUser'));
-    return user ? { ...user, ws, wsConnected } : null;
-  } catch {
+    const userRaw = localStorage.getItem('googleUser');
+    if (!userRaw) return null;
+    const user = JSON.parse(userRaw);
+    return user ? { token: user.token, user: user.user, _id: user.user?._id, ws, wsConnected } : null;
+  } catch (e) {
+    console.error('[GoogleAuth] Error parsing user from localStorage in getGoogleUser:', e);
     return null;
   }
 };
 
 window.googleLogout = function() {
+  console.log('[GoogleAuth] googleLogout called.');
   // Déconnexion côté serveur (optionnel)
   const user = window.getGoogleUser();
   if(user && user.token) {
-    fetch('https://wise-server.onrender.com/auth/api/logout', {
+    console.log('[GoogleAuth] Sending logout request to backend.');
+    fetch('http://localhost:5000/auth/api/logout', {
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + user.token }
+    }).then(res => {
+      console.log('[GoogleAuth] Backend logout response status:', res.status);
+    }).catch(err => {
+      console.error('[GoogleAuth] Error during backend logout request:', err);
     });
   }
   localStorage.removeItem('googleUser');
-  if(ws) ws.close();
+  console.log('[GoogleAuth] Removed googleUser from localStorage.');
+  if(ws) {
+    console.log('[GoogleAuth] Closing WebSocket connection on logout.');
+    ws.close();
+  }
   showAuthNotification('Déconnexion réussie.', 'success');
-  setTimeout(() => location.reload(), 1200);
+  setTimeout(() => {
+    console.log('[GoogleAuth] Reloading page after logout.');
+    location.reload();
+  }, 1200);
 };

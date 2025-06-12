@@ -11352,8 +11352,8 @@ h5,
   }
 
   .owl-stage-outer {
-    margin-bottom: 9vh;
-    margin-top: 4vh;
+    padding-bottom: 9vh;
+    padding-top: 4vh;
   }
 }
 
