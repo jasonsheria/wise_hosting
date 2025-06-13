@@ -155,8 +155,8 @@ function chatbotInit() {
   if (!window.animate) {
     const animateScript = document.createElement('script');
     animateScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js';
-    animateScript.onload = () => { 
-      window.animate = true; 
+    animateScript.onload = () => {
+      window.animate = true;
       console.log('[Chatbot] anime.js loaded');
     };
     document.head.appendChild(animateScript);
@@ -206,7 +206,7 @@ function chatbotInit() {
       msgStatus = getStatusIcon(status || 'sent');
     }
     // Bot messages don't typically show status icons like 'sent' or 'read' from its perspective
-    
+
     const padding = window.innerWidth <= 600 ? '10px 14px' : '12px 18px';
     const borderRadius = '18px'; // Unified border radius
     const maxWidth = '80%'; // Max width for bubbles
@@ -215,14 +215,14 @@ function chatbotInit() {
     const userBubbleStyle = `background:linear-gradient(135deg,#43cea2,#185a9d);color:#fff;border-radius:${borderRadius} ${borderRadius} ${from === 'user' ? '4px' : borderRadius} ${from === 'user' ? borderRadius : '4px'};`;
     const botBubbleStyle = `background:#fff;color:#333;border:1px solid #e0e8f0;border-radius:${borderRadius} ${borderRadius} ${from === 'bot' ? '4px' : borderRadius} ${from === 'bot' ? borderRadius : '4px'};`;
 
-    msg.innerHTML = `<div class="cbt-msg-bubble" style="${from === 'user' ? userBubbleStyle : botBubbleStyle}padding:${padding};max-width:${maxWidth};display:inline-block;box-shadow:0 3px 8px rgba(0,0,0,0.08);font-size:${fontSize};line-height:1.55;position:relative;${animated?'animation:cbt-msg-in 0.4s cubic-bezier(.25,.8,.5,1);':''}">
+    msg.innerHTML = `<div class="cbt-msg-bubble" style="${from === 'user' ? userBubbleStyle : botBubbleStyle}padding:${padding};max-width:${maxWidth};display:inline-block;box-shadow:0 3px 8px rgba(0,0,0,0.08);font-size:${fontSize};line-height:1.55;position:relative;${animated ? 'animation:cbt-msg-in 0.4s cubic-bezier(.25,.8,.5,1);' : ''}">
       <span>${text}</span>
       <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-top:5px;font-size:0.88em;opacity:0.8;color:${from === 'user' ? 'rgba(255,255,255,0.8)' : '#777'};">
         <span>${msgTime}</span>${msgStatus}
       </div>
     </div>`;
-    
-    if(animated) {
+
+    if (animated) {
       msg.style.opacity = '0';
       msg.style.transform = from === 'user' ? 'translateX(20px)' : 'translateX(-20px)';
       setTimeout(() => {
@@ -324,8 +324,8 @@ function chatbotInit() {
       } else {
         console.log('[Chatbot] getUserInfo: Parsed googleUser data does not contain expected user details.', googleUser);
       }
-    } catch (e) { 
-      console.error('[Chatbot] Erreur parsing googleUser:', e); 
+    } catch (e) {
+      console.error('[Chatbot] Erreur parsing googleUser:', e);
     }
     return null;
   }
@@ -350,7 +350,7 @@ function chatbotInit() {
       `;
       // Add hover effect for logout button
       const logoutBtn = document.getElementById('cbt-logout-btn');
-      if(logoutBtn) {
+      if (logoutBtn) {
         logoutBtn.onmouseover = () => logoutBtn.style.background = 'linear-gradient(135deg,#f86a4a,#fea468)';
         logoutBtn.onmouseout = () => logoutBtn.style.background = 'linear-gradient(135deg,#ff7e5f,#feb47b)';
       }
@@ -383,7 +383,7 @@ function chatbotInit() {
       `;
       // Add hover effect for login button
       const loginBtn = document.getElementById('cbt-login-btn');
-      if(loginBtn) {
+      if (loginBtn) {
         loginBtn.onmouseover = () => loginBtn.style.background = 'linear-gradient(135deg,#3dbb93,#15508c)';
         loginBtn.onmouseout = () => loginBtn.style.background = 'linear-gradient(135deg,#43cea2,#185a9d)';
       }
@@ -431,20 +431,30 @@ function chatbotInit() {
         console.log('[Chatbot] Quick question button clicked:', btn.textContent);
         // Vérifie la connexion avant d'autoriser le chat
         if (!getUserInfo()) {
-          console.log('[Chatbot] Quick question: User not logged in, showing login prompt.');
+          // console.log('[Chatbot] Quick question: User not logged in, showing login prompt.');
           tabBtns[1].click(); // Switch to chat tab
-          messages.innerHTML = ''; // Clear previous messages
+          messages.innerHTML = 'veuillez vous connecter pour discuter avec le bot'; // Clear previous messages
           appendMessage("Veuillez vous connecter pour discuter avec WiseBot.", 'bot');
-          if (window.showGoogleLoginNotification) window.showGoogleLoginNotification();
+          // if (window.showGoogleLoginNotification) window.showGoogleLoginNotification();
           return;
         }
         tabBtns[1].click(); // Switch to chat tab
         input.value = btn.textContent; // Populate input
-        form.dispatchEvent(new Event('submit', { bubbles: true })); // Submit form
+        //envoyer le message automatiquement sant attendre l'envoi et le rechargement de page
+        console.log('[Chatbot] Quick question: User logged in, sending question:', btn.textContent);
+        const val = input.value.trim();
+        if (!val) {
+          // console.log('[Chatbot] form.onsubmit: Empty input, nothing to send.');
+          return false;
+        }
+        // Send the message directly
+        sendChatbotMessage(val);
+        input.value = '';
+
+        // form.dispatchEvent(new Event('submit', { bubbles: true })); // Submit form
         console.log('[Chatbot] Quick question: User logged in, submitting question.');
       };
     });
-    updateProfileTab();
   }, 100);
 
   function showBot() {
@@ -482,7 +492,7 @@ function chatbotInit() {
       if (!welcomeShown) {
         if (user && user.username && user.email) {
           console.log('[Chatbot] showBot: Appending welcome back message for user:', user.name);
-          appendMessage(`Bonjour ${user.username || user.email } ! Ravi de vous revoir. Comment puis-je vous aider ? 😊`, 'bot', true);
+          appendMessage(`Bonjour ${user.username || user.email} ! Ravi de vous revoir. Comment puis-je vous aider ? 😊`, 'bot', true);
         } else {
           console.log('[Chatbot] showBot: Appending generic welcome message.');
           appendMessage(getWelcomeMessage(), 'bot', true);
@@ -537,7 +547,7 @@ function chatbotInit() {
     console.log('[Chatbot] closeBtn clicked');
     hideBot();
   };
-  
+
   // This form.onsubmit is for the old non-socket logic, will be overridden later by socket logic if socket connects.
   // Keep it for fallback or if socket connection fails.
   const initialFormSubmitHandler = e => {
@@ -551,16 +561,16 @@ function chatbotInit() {
     // For clarity, we can leave this and let the socket logic override it.
     // If socket is intended to be the ONLY way, then this should be removed or adapted.
     // The current structure has form.onsubmit reassigned later.
-    
+
     // If we want to ensure this uses the socket logic if available:
     const currentUser = getChatbotUser();
     if (currentUser && currentUser.token && socket && isSocketConnected) {
-        console.log('[Chatbot] Initial form.onsubmit: Socket available, using sendChatbotMessage.');
-        sendChatbotMessage(val);
+      console.log('[Chatbot] Initial form.onsubmit: Socket available, using sendChatbotMessage.');
+      sendChatbotMessage(val);
     } else {
-        console.log('[Chatbot] Initial form.onsubmit: Socket not available, using local botReply.');
-        appendMessage(val, 'user', true, 'sent');
-        botReply(val); // Fallback to old bot logic if no socket
+      console.log('[Chatbot] Initial form.onsubmit: Socket not available, using local botReply.');
+      appendMessage(val, 'user', true, 'sent');
+      botReply(val); // Fallback to old bot logic if no socket
     }
     input.value = '';
   };
@@ -573,17 +583,17 @@ function chatbotInit() {
   let chatbotUser = null;
 
   function getChatbotUser() {
-  try {
-    const raw = JSON.parse(localStorage.getItem('googleUser'));
-    if (!raw) return null;
-    // Si backend renvoie {token, user: {...}}, aplatir
-    if (raw.user && (raw.user._id || raw.user.id) && raw.token) {
-      return { ...raw.user, token: raw.token, _id: raw.user._id };
-    }
-    // Sinon, structure déjà à plat
-    return raw;
-  } catch { return null; }
-}
+    try {
+      const raw = JSON.parse(localStorage.getItem('googleUser'));
+      if (!raw) return null;
+      // Si backend renvoie {token, user: {...}}, aplatir
+      if (raw.user && (raw.user._id || raw.user.id) && raw.token) {
+        return { ...raw.user, token: raw.token, _id: raw.user._id };
+      }
+      // Sinon, structure déjà à plat
+      return raw;
+    } catch { return null; }
+  }
 
   function connectChatbotSocket() {
     chatbotUser = getChatbotUser(); // Ensure chatbotUser is fresh
@@ -622,15 +632,15 @@ function chatbotInit() {
       socket.emit('getMessageHistory', { userId: chatbotUser._id });
     });
 
-    socket.on('disconnect', (reason) => { 
-      isSocketConnected = false; 
+    socket.on('disconnect', (reason) => {
+      isSocketConnected = false;
       console.log('[Chatbot] [SOCKET] Déconnecté du WebSocket. Raison:', reason);
     });
 
-    socket.on('connect_error', (err) => { 
-      isSocketConnected = false; 
+    socket.on('connect_error', (err) => {
+      isSocketConnected = false;
       console.error('[Chatbot] [SOCKET] Erreur de connexion WebSocket.', err.message, err.data || '');
-      showNotif('Erreur WebSocket: ' + err.message, 'error'); 
+      // showNotif('Erreur WebSocket: ' + err.message, 'error'); 
     });
 
     socket.on('reconnect_attempt', (attempt) => {
@@ -661,7 +671,7 @@ function chatbotInit() {
     socket.on('messageHistory', (history) => {
       console.log('[Chatbot] [SOCKET] Événement "messageHistory" reçu.', history);
       messages.innerHTML = '';
-      if(Array.isArray(history)) {
+      if (Array.isArray(history)) {
         history.forEach(msg => appendChatbotMessage(msg, msg.sender === chatbotUser._id ? 'user' : 'bot', false));
         scrollChatbotToBottom();
         console.log('[Chatbot] [SOCKET] Historique des messages traité.');
@@ -683,7 +693,7 @@ function chatbotInit() {
     }
     if (!socket || !isSocketConnected) {
       console.warn('[Chatbot] sendChatbotMessage: Socket not connected. Message not sent.');
-      showNotif('Non connecté au chat. Tentative de reconnexion...', 'error');
+      // showNotif('Non connecté au chat. Tentative de reconnexion...', 'error');
       connectChatbotSocket(); // Attempt to reconnect
       return;
     }
@@ -693,7 +703,7 @@ function chatbotInit() {
       text: text,
       date: new Date().toISOString()
     };
-    console.log('[Chatbot] sendChatbotMessage: Emitting "newMessage" via socket.', msg);
+    // console.log('[Chatbot] sendChatbotMessage: Emitting "newMessage" via socket.', msg);
     socket.emit('newMessage', msg);
     // Append user's own message to their UI immediately
     // The server might echo it back or send a confirmation, handle duplicates if necessary
@@ -703,13 +713,13 @@ function chatbotInit() {
   }
 
   function appendChatbotMessage(msg, from, scroll = true) {
-    console.log('[Chatbot] appendChatbotMessage: Appending message.', { msg, from });
-    const messagesDiv = document.getElementById('chatbot-messages'); 
+    // console.log('[Chatbot] appendChatbotMessage: Appending message.', { msg, from });
+    const messagesDiv = document.getElementById('chatbot-messages');
     if (!messagesDiv) {
       console.error('[Chatbot] appendChatbotMessage: messagesDiv element not found.');
       return;
     }
-    
+
     const bubbleContainer = document.createElement('div');
     bubbleContainer.style.display = 'flex';
     bubbleContainer.style.justifyContent = from === 'user' ? 'flex-end' : 'flex-start';
@@ -722,20 +732,20 @@ function chatbotInit() {
     const borderRadius = '18px';
     const userBubbleStyle = `background:linear-gradient(135deg,#43cea2,#185a9d);color:#fff;border-radius:${borderRadius} ${borderRadius} 4px ${borderRadius};`;
     const botBubbleStyle = `background:#fff;color:#333;border:1px solid #e0e8f0;border-radius:${borderRadius} ${borderRadius} ${borderRadius} 4px;`;
-    
+
     bubble.style = `${from === 'user' ? userBubbleStyle : botBubbleStyle}padding:10px 16px;max-width:80%;word-break:break-word;box-shadow:0 3px 8px rgba(0,0,0,0.08);font-size:0.98rem;line-height:1.55;position:relative;animation:cbt-msg-in 0.4s cubic-bezier(.25,.8,.5,1);`;
-    
+
     // Sanitize message content before inserting as HTML
     const textSpan = document.createElement('span');
     textSpan.textContent = msg.text || msg.content || '';
-    
+
     const timeDiv = document.createElement('div');
     timeDiv.style = `font-size:0.88em;color:${from === 'user' ? 'rgba(255,255,255,0.8)' : '#777'};margin-top:5px;text-align:right;`;
     timeDiv.textContent = formatTime(new Date(msg.date || Date.now()));
 
     bubble.appendChild(textSpan);
     bubble.appendChild(timeDiv);
-    
+
     bubbleContainer.appendChild(bubble);
     messagesDiv.appendChild(bubbleContainer);
 
@@ -748,15 +758,15 @@ function chatbotInit() {
       bubble.style.transform = 'translateX(0)';
     }, 10);
 
-    console.log('[Chatbot] appendChatbotMessage: Message appended to UI.');
-    if(scroll) scrollChatbotToBottom();
+    // console.log('[Chatbot] appendChatbotMessage: Message appended to UI.');
+    if (scroll) scrollChatbotToBottom();
   }
 
   function scrollChatbotToBottom() {
     const messagesDiv = document.getElementById('chatbot-messages');
-    if(messagesDiv) {
+    if (messagesDiv) {
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      console.log('[Chatbot] scrollChatbotToBottom: Scrolled.');
+      // console.log('[Chatbot] scrollChatbotToBottom: Scrolled.');
     } else {
       console.warn('[Chatbot] scrollChatbotToBottom: messagesDiv element not found.');
     }
@@ -764,13 +774,13 @@ function chatbotInit() {
 
   // --- INITIALISATION SOCKET AU DEMARRAGE SI CONNECTE ---
   setTimeout(() => {
-    console.log('[Chatbot] Initializing socket connection check on startup.');
+    // console.log('[Chatbot] Initializing socket connection check on startup.');
     chatbotUser = getChatbotUser();
     if (chatbotUser && chatbotUser.token) {
-      console.log('[Chatbot] User has token, attempting to connect WebSocket.');
+      // console.log('[Chatbot] User has token, attempting to connect WebSocket.');
       connectChatbotSocket();
     } else {
-      console.log('[Chatbot] No user token found on startup, WebSocket not connected.');
+      // console.log('[Chatbot] No user token found on startup, WebSocket not connected.');
     }
   }, 100);
 
@@ -785,18 +795,23 @@ function chatbotInit() {
     setTimeout(() => notif.remove(), 5000);
   }
   // --- MODIFIER LE FORMULAIRE POUR ENVOYER VIA SOCKET ---
-  form.onsubmit = e => {
-    e.preventDefault();
-    console.log('[Chatbot] Socket-aware form.onsubmit triggered.');
+  form.onsubmit = function (e) {
+    if (e) e.preventDefault();
+    // console.log('[Chatbot] Socket-aware form.onsubmit triggered.');
     const val = input.value.trim();
     if (!val) {
-      console.log('[Chatbot] form.onsubmit: Empty input, nothing to send.');
-      return;
+      // console.log('[Chatbot] form.onsubmit: Empty input, nothing to send.');
+      return false;
     }
     sendChatbotMessage(val);
     input.value = '';
-    console.log('[Chatbot] form.onsubmit: Message sent via sendChatbotMessage, input cleared.');
+    // console.log('[Chatbot] form.onsubmit: Message sent via sendChatbotMessage, input cleared.');
+    return false;
   };
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    return false;
+  }, true);
 
   // Ajout du style pour l'animation typing
   if (!document.getElementById('cbt-typing-style')) {

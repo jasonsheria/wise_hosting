@@ -104,6 +104,7 @@ h6 {
 p {
   margin-top: 0;
   margin-bottom: 1rem;
+  color: black;
 }
 
 abbr[title],
@@ -12803,9 +12804,9 @@ textarea.form-control {
 
 .block-7 {
   padding: 30px;
-  -webkit-box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
-  -moz-box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  /* -webkit-box-shadow: */
+  /* box-shadow: rgba(50, 50, 93, 0) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 3px -3px;box-shadow: rgba(50, 50, 93, 0) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 3px -3px; */
+  /* box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; */
   background: #fff;
 }
 

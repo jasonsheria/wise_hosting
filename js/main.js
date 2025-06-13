@@ -221,6 +221,7 @@ loader();
 	};
 	contentWayPoint();
 
+	window.contentWayPoint = contentWayPoint;
 
 	// navigation
 	var OnePageNav = function() {

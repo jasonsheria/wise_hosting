@@ -21,6 +21,7 @@ function connectWebSocket(token, userId) {
   });
   wsUserId = userId;
   wsConnected = false;
+  // L'ID du socket n'est disponible qu'après connexion
   console.log('[GoogleAuth] Socket.IO: Attempting to connect...');
 
   ws.on('connect', function() {
@@ -28,7 +29,7 @@ function connectWebSocket(token, userId) {
     console.log('[GoogleAuth] Socket.IO: Connection opened. Socket ID:', ws.id);
     // Authentification initiale via token is already handled by backend middleware
     // If you need to send a custom event, do it here
-    // ws.emit('identify', { userId });
+     ws.emit('identify', { userId });
   });
 
   ws.on('disconnect', function(reason) {
@@ -39,6 +40,17 @@ function connectWebSocket(token, userId) {
   ws.on('connect_error', function(error) {
     wsConnected = false;
     console.error('[GoogleAuth] Socket.IO: Connection error.', error);
+    // Gestion du token expiré ou invalide
+    const errMsg = (error && (error.message || error.data || error.toString())).toLowerCase();
+    if (errMsg.includes('jwt expired') || errMsg.includes('invalid token') || errMsg.includes('401') || errMsg.includes('403')) {
+      console.warn('[GoogleAuth] Token expiré ou invalide détecté lors de la reconnexion WebSocket. Suppression du localStorage et relance de l’auth Google.');
+      localStorage.removeItem('googleUser');
+      if (ws) ws.close();
+      showAuthNotification('Session expirée. Veuillez vous reconnecter avec Google.', 'error');
+      setTimeout(() => {
+        waitForPreloaderAndGoogleScript();
+      }, 800);
+    }
   });
 
   // Example: handle custom events from backend
@@ -303,10 +315,10 @@ window.addEventListener('DOMContentLoaded', function() {
       const u = JSON.parse(userRaw);
       // Ensure the structure matches what onGoogleSignIn saves: { token, user: { _id, name, email, ... } }
       if(u.token && u.user && u.user._id) {
-        console.log('[GoogleAuth] Attempting WebSocket reconnect for user:', u.user._id);
+        // console.log('[GoogleAuth] Attempting WebSocket reconnect for user:', u.user._id);
         connectWebSocket(u.token, u.user._id);
       } else if (u.token && u._id) { // Fallback for older structure
-        console.log('[GoogleAuth] Attempting WebSocket reconnect for user (fallback structure):', u._id);
+        // console.log('[GoogleAuth] Attempting WebSocket reconnect for user (fallback structure):', u._id);
         connectWebSocket(u.token, u._id);
       }
       else {
@@ -320,18 +332,18 @@ window.addEventListener('DOMContentLoaded', function() {
     return; // Don't show login notification if user data exists (even if connection fails, it will retry)
   }
   if(localStorage.getItem('googleUser')) {
-    console.log('[GoogleAuth] User already logged in (second check), skipping login notification.');
+    // console.log('[GoogleAuth] User already logged in (second check), skipping login notification.');
     return;
   }
-  console.log('[GoogleAuth] No user data in localStorage, waiting for preloader/Google script to show login notification.');
+  // console.log('[GoogleAuth] No user data in localStorage, waiting for preloader/Google script to show login notification.');
   waitForPreloaderAndGoogleScript();
 });
 
 window.onGoogleSignIn = async function(response) {
-  console.log('[GoogleAuth] onGoogleSignIn callback triggered. Credential received:', !!response.credential);
+  // console.log('[GoogleAuth] onGoogleSignIn callback triggered. Credential received:', !!response.credential);
   try {
     // Envoie le token Google au backend pour authentification
-    console.log('[GoogleAuth] Sending Google credential to backend for verification.');
+    // console.log('[GoogleAuth] Sending Google credential to backend for verification.');
     const res = await fetch('http://localhost:5000/auth/api/google', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -339,15 +351,15 @@ window.onGoogleSignIn = async function(response) {
     });
     if(!res.ok) {
       const errorText = await res.text();
-      console.error('[GoogleAuth] Google sign-in backend error. Status:', res.status, 'Response:', errorText);
+      // console.error('[GoogleAuth] Google sign-in backend error. Status:', res.status, 'Response:', errorText);
       throw new Error('Erreur serveur: ' + res.status + ' - ' + errorText);
     }
     const data = await res.json();
-    console.log('[GoogleAuth] Google sign-in successful. Backend response:', data);
+    // console.log('[GoogleAuth] Google sign-in successful. Backend response:', data);
     localStorage.setItem('googleUser', JSON.stringify(data)); // data should be { token, user: { _id, name, email, ... } }
     if(data.token && data.user && data.user._id) {
       if (typeof io !== 'undefined') {
-        console.log('[GoogleAuth] Connecting WebSocket post-login for user:', data.user._id);
+        // console.log('[GoogleAuth] Connecting WebSocket post-login for user:', data.user._id);
         connectWebSocket(data.token, data.user._id);
       } else {
         console.error('[GoogleAuth] Socket.IO client (io) is not loaded!');
@@ -358,7 +370,7 @@ window.onGoogleSignIn = async function(response) {
     showAuthNotification('Bienvenue, ' + (data.user.name || data.user.email) + ' !', 'success');
     const notif = document.getElementById('google-login-notif');
     if(notif) {
-      console.log('[GoogleAuth] Removing Google login notification.');
+      // console.log('[GoogleAuth] Removing Google login notification.');
       notif.remove();
     }
     setTimeout(() => {
@@ -384,11 +396,11 @@ window.getGoogleUser = function() {
 };
 
 window.googleLogout = function() {
-  console.log('[GoogleAuth] googleLogout called.');
+  // console.log('[GoogleAuth] googleLogout called.');
   // Déconnexion côté serveur (optionnel)
   const user = window.getGoogleUser();
   if(user && user.token) {
-    console.log('[GoogleAuth] Sending logout request to backend.');
+    // console.log('[GoogleAuth] Sending logout request to backend.');
     fetch('http://localhost:5000/auth/api/logout', {
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + user.token }
@@ -401,7 +413,7 @@ window.googleLogout = function() {
   localStorage.removeItem('googleUser');
   console.log('[GoogleAuth] Removed googleUser from localStorage.');
   if(ws) {
-    console.log('[GoogleAuth] Closing WebSocket connection on logout.');
+    // console.log('[GoogleAuth] Closing WebSocket connection on logout.');
     ws.close();
   }
   showAuthNotification('Déconnexion réussie.', 'success');
